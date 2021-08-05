@@ -2,20 +2,17 @@
 # @Author: LQS
 # @Date:   2021-07-18 15:49:28
 # @Last Modified by:   LQS
-# @Last Modified time: 2021-07-23 19:22:55
+# @Last Modified time: 2021-08-05 21:12:57
 import requests, re, datetime
 from bs4 import BeautifulSoup
 from pymongo import MongoClient
+from textProcessing.processingArticle import processArticle as pA
 
 import gevent
 from gevent import monkey
-
-from textProcessing import processingArticle as pA
-
 monkey.patch_all()
 class jrjStockCrawler(object):
-    '''Crawl company news from 'http://roll.finance.sina.com.cn/finance/zq1/ssgs/index.shtml' website.
-
+    '''
     # Arguments:
         totalPages: Number of pages set to be crawled.
         Range: Divide total web pages into totalPages/Range parts 
@@ -106,7 +103,7 @@ class jrjStockCrawler(object):
         #start get special date from a special website
         spans = bs.find_all('span')
         for span in spans:
-            for child in spans.children:
+            for child in span.children:
                 if child == 'jrj_final_date_start':
                     date = span.text.replace('\r', '').replace('\n', '')
                     break
@@ -120,7 +117,7 @@ class jrjStockCrawler(object):
         if article_bs:
             article = pA.processArticle().jrj_own(article_bs.text)
         
-        return date, article
+        return (date, article)
 
     def getCompNews_jrj(self, dateList:list):
         '''
@@ -139,17 +136,21 @@ class jrjStockCrawler(object):
                     '/' + date.replace('-', '') + url_diffPages
                 pageNums = self.findPageNums(url_complete, date)
                 for page in range(1, pageNums+1):
+                    url_sheet_cur = url_body + date.replace('-', '')[0:6] +\
+                        '/'+ date.replace('-', '') + '_{}.shtml'.format(page)
+                    '''
                     url_sheet_cur = urls_date.append(url_body + date.replace('-', '')[0:6] +\
                         '/'+ date.replace('-', '') + '_{}.shtml'.format(page))
+                    '''
                     urls_date.append((url_sheet_cur, date))
 
-            for url_specific, date_specific in urls_date:
+            for (url_specific, date_specific) in urls_date:
                 print('ready to get Info from [{0}], the data is *{1}*'.format(url_specific, date_specific))
                 resp = requests.get(url_specific)
                 bs = BeautifulSoup(resp.text, 'lxml')
                 a_list = bs.find_all('a', href=re.compile(r'http://stock\.jrj\.com\.cn.*?(shtml)$'), text=True, target=None)
                 for a in a_list:
-                    date, article, notFoundPage = self.getUrlInfo_fromjrj(a['href'], date_specific)
+                    (date, article)= self.getUrlInfo_fromjrj(a['href'], date_specific)
                     if article:
                         data = {'Date': date,
                                 'Address': a['href'],
@@ -177,7 +178,7 @@ class jrjStockCrawler(object):
                 a_list = bs.find_all('a', href=re.compile(r'http://stock\.jrj\.com\.cn.*?(shtml)$'), text=True, target=None)
                 for a in a_list:
                     if a['href'] not in AddressList:
-                        date, article, notFoundPage = self.getUrlInfo_fromjrj(a['href'], date_specific)
+                        (date, article)= self.getUrlInfo_fromjrj(a['href'], date_specific)
                         if article:
                             data = {'Date': date,
                                     'Address': a['href'],

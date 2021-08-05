@@ -2,13 +2,13 @@
 # @Author: LQS
 # @Date:   2021-07-19 13:53:12
 # @Last Modified by:   LQS
-# @Last Modified time: 2021-07-20 16:50:35
+# @Last Modified time: 2021-08-05 21:00:04
 
 import re
 
 class processArticle(object):
     """docstring for processArticle"""
-    def __init__(self,):
+    def __init__(self):
         super(processArticle, self).__init__()
 
     def regularPro(self, article:str)->str:

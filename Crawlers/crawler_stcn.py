@@ -2,7 +2,7 @@
 # @Author: LQS
 # @Date:   2021-07-20 15:29:04
 # @Last Modified by:   LQS
-# @Last Modified time: 2021-07-22 15:29:57
+# @Last Modified time: 2021-08-05 21:18:32
 
 import requests, re, datetime
 from bs4 import BeautifulSoup
@@ -10,6 +10,7 @@ from pymongo import MongoClient
 
 from textProcessing.processingArticle import processArticle
 
+import gevent
 from gevent import monkey
 monkey.patch_all()
 

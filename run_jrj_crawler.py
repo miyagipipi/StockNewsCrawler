@@ -7,6 +7,7 @@
 from Crawlers.crawler_jrj import jrjStockCrawler
 
 if __name__ == '__main__':
-    web_crawl_obj = jrjStockCrawler('2021-01-01', '2021-07-19', 100,\
+    web_crawl_obj = jrjStockCrawler('2021-07-18', '2021-07-19', 50,\
                         IP='localhost', PORT=27017, ThreadsNum=1,\
                         dbName='Jrj_stock', collectionName='jrj_news_company')
+    web_crawl_obj.coroutine_run()

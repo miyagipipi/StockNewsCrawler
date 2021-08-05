@@ -2,7 +2,7 @@
 # @Author: LQS
 # @Date:   2021-07-14 16:15:48
 # @Last Modified by:   LQS
-# @Last Modified time: 2021-07-29 22:19:05
+# @Last Modified time: 2021-08-05 21:17:49
 
 import re
 import requests
@@ -14,7 +14,7 @@ from pymongo import MongoClient
 
 import gevent
 from gevent import monkey
-monkey.patch_all
+monkey.patch_all()
 
 class CnstockCrawler(object):
     '''Crawl company news from 
@@ -207,5 +207,3 @@ class CnstockCrawler(object):
         jobs = []
         jobs.append(gevent.spawn(self.getCompNews_Cnstock, totalPages, kwarg['url']))
         gevent.joinall(jobs)
-
-#。。。。
